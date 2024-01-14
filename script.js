@@ -1,5 +1,5 @@
 const gameboard = (function () {
-    const new_board = () => [
+    var new_board = [
         ['.', '.', '.'],
         ['.', '.', '.'],
         ['.', '.', '.'],
@@ -13,12 +13,12 @@ const gameboard = (function () {
 
         // Enforce that a, b are within values 1-3
         if (!(row > 0 && row < 4) || (!(col > 0 && col < 4))) {
-            return
+            return        
         }
         
-        
-
     }
-    return { new_board }
+
+
+    return { new_board, place_marker }
 }
 )()
