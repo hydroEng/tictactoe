@@ -1,9 +1,14 @@
 const gameboard = (function () {
-    var board = [
-        ['.', '.', '.'],
-        ['.', '.', '.'],
-        ['.', '.', '.'],
-    ]
+    function new_board () {
+        board = [
+            ['.', '.', '.'],
+            ['.', '.', '.'],
+            ['.', '.', '.'],
+        ]
+        return board
+    }
+    
+    var board = new_board()
 
     function is_marker (marker) {
         if ((marker == 'x') || (marker == 'o')) {
@@ -26,6 +31,12 @@ const gameboard = (function () {
         return str
     }
 
+    const display_board = () => {
+        for (i=0;i < board.length; i++) {
+            console.log(board[i])
+        }
+    }
+
     function check_triple (triple) {
         var game_won
         if (triple == 'x,x,x') {
@@ -42,9 +53,27 @@ const gameboard = (function () {
         return game_won
     }
 
-    const display_board = () => {
-        for (i=0;i < board.length; i++) {
-            console.log(board[i])
+    
+    const check_win = function () {
+        // Check if wins along row.
+        for (i=0; i < board.length; i++) {
+            var row = board[i].toString();
+            game_won = check_triple(row)
+        }
+        // Check if wins along diagonals.
+        ['LR', 'RL'].forEach((direction) => {
+            var diagonal = diagonals_to_str(direction)
+            game_won = check_triple(diagonal)
+            
+        })
+        // Check if wins along columns.
+        for (i=0; i < board.length; i++) {
+            var column = `${board[0][i]},${board[1][i]},${board[2][i]}`
+            game_won = check_triple(column)
+        }
+
+        if (game_won) {
+            console.log("Game has concluded due to win.")
         }
     }
 
@@ -75,32 +104,17 @@ const gameboard = (function () {
         // Place marker if all checks pass.
         board[row - 1].splice([col - 1],1, marker)
         display_board()
+        game_won = check_win()
+        return game_won
     }
-
-    const check_win = function () {
-        // Check if wins along row.
-        for (i=0; i < board.length; i++) {
-            var row = board[i].toString();
-            game_won = check_triple(row)
-        }
-        // Check if wins along diagonals.
-        ['LR', 'RL'].forEach((direction) => {
-            var diagonal = diagonals_to_str(direction)
-            game_won = check_triple(diagonal)
-            
-        })
-        // Check if wins along columns.
-        for (i=0; i < board.length; i++) {
-            var column = `${board[0][i]},${board[1][i]},${board[2][i]}`
-            game_won = check_triple(column)
-        }
-
-        if (game_won) {
-            console.log("Game has concluded due to win.")
-        }
-    }
-
-    
-    return { board, place_marker, display_board }
+    return { board, new_board, place_marker, display_board }
 }
 )()
+
+// TODO:
+
+// - Create a function that will check if there are any valid moves left. If not, end game.
+// - Create a function to end game. 
+// - NEW BOARD FUNC DONE.
+
+// - Build simple front-end.
