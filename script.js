@@ -12,6 +12,36 @@ const gameboard = (function () {
         return false
     }
 
+    function diagonals_to_str (direction) {
+        // Valid directions: 'LR' (left-to-right), "RL" (right to left).
+        if (direction=='LR') {
+            str = `${board[0][0]},${board[1][1]},${board[2][2]}`
+        }
+        else if (direction=='RL') {
+            str = `${board[0][2]},${board[1][1]},${board[2][0]}`
+        }
+        else {
+            return
+        }
+        return str
+    }
+
+    function check_triple (triple) {
+        var game_won
+        if (triple == 'x,x,x') {
+            console.log("Crosses wins!")
+            game_won = true
+        }
+        else if (triple == 'o,o,o') {
+            console.log("Naughts wins!")
+            game_won = true
+        }
+        else {
+            game_won = false
+        }
+        return game_won
+    }
+
     const display_board = () => {
         for (i=0;i < board.length; i++) {
             console.log(board[i])
@@ -45,6 +75,29 @@ const gameboard = (function () {
         // Place marker if all checks pass.
         board[row - 1].splice([col - 1],1, marker)
         display_board()
+    }
+
+    const check_win = function () {
+        // Check if wins along row.
+        for (i=0; i < board.length; i++) {
+            var row = board[i].toString();
+            game_won = check_triple(row)
+        }
+        // Check if wins along diagonals.
+        ['LR', 'RL'].forEach((direction) => {
+            var diagonal = diagonals_to_str(direction)
+            game_won = check_triple(diagonal)
+            
+        })
+        // Check if wins along columns.
+        for (i=0; i < board.length; i++) {
+            var column = `${board[0][i]},${board[1][i]},${board[2][i]}`
+            game_won = check_triple(column)
+        }
+
+        if (game_won) {
+            console.log("Game has concluded due to win.")
+        }
     }
 
     
