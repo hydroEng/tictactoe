@@ -9,6 +9,7 @@ const gameboard = (function () {
     }
     
     var board = new_board()
+    var turns = 0
 
     function is_marker (marker) {
         if ((marker == 'x') || (marker == 'o')) {
@@ -18,6 +19,8 @@ const gameboard = (function () {
     }
 
     function diagonals_to_str (direction) {
+        // Helper function to convert diagonal direction markers to a string separated by commas.
+        // This will allow checks for wins.
         // Valid directions: 'LR' (left-to-right), "RL" (right to left).
         if (direction=='LR') {
             str = `${board[0][0]},${board[1][1]},${board[2][2]}`
@@ -38,6 +41,7 @@ const gameboard = (function () {
     }
 
     function check_triple (triple) {
+        // Function to check if win condition has been met. Input is a comma-seperated string of 3 markers.
         var game_won
         if (triple == 'x,x,x') {
             console.log("Crosses wins!")
@@ -53,7 +57,21 @@ const gameboard = (function () {
         return game_won
     }
 
-    
+    const check_valid_moves = function () {
+        // Helper function to check if any valid moves remain. Alternatively, can just end
+        // game at 9 turns. 
+        for (i=0; i < board.length; i++) {
+            var row = board[i]
+            for (j=0; j < row.length; j++) {
+                marker = row[j]
+                if (marker == '.') {
+                    return(true)
+                }
+            }
+        }
+        return(false)
+    }
+
     const check_win = function () {
         // Check if wins along row.
         for (i=0; i < board.length; i++) {
@@ -74,11 +92,14 @@ const gameboard = (function () {
 
         if (game_won) {
             console.log("Game has concluded due to win.")
+            return(true)
         }
     }
 
+
     const place_marker = (row, col, marker) => {
         var invalid_move = false
+        turns += 1
         // Ensure that x or o are the markers provided.
         if (!is_marker(marker)) {
             console.log("Error: Please only use 'x' or 'o' as markers.")
@@ -104,12 +125,38 @@ const gameboard = (function () {
         // Place marker if all checks pass.
         board[row - 1].splice([col - 1],1, marker)
         display_board()
-        game_won = check_win()
+        var game_won = check_win()
+        if(game_won) {
+            console.log("Game has ended due to win")
+        }
+        else if(turns === 9){
+            console.log("Game has ended as there are no more valid moves!")
+        }
         return game_won
     }
-    return { board, new_board, place_marker, display_board }
+    return { board, turns, new_board, place_marker, display_board }
 }
 )()
+
+// Let user place markers on board.
+
+const board = document.getElementById("board")
+const rows = board.children
+
+for (i=0; i<rows.length; i++) {
+    var row = rows[i]
+    var cells = row.children
+    for (j=0; j<row.length; j++) {
+        var cell = cells[j]
+        console.log(cell)
+        cell.addEventListener(
+            'click',
+            (e) => {
+                e.target.innerText = 'x' }
+            )
+        }
+    }
+
 
 // TODO:
 

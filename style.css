@@ -1,0 +1,25 @@
+body {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#board {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    border: 1px solid;
+    border-color: rgb(44, 44, 44);
+    width: 5vw;
+    height: 5vw;
+    display: flex;
+    justify-content: center;
+}
