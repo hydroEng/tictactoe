@@ -10,6 +10,7 @@ const gameboard = (function () {
     
     var board = new_board()
     var turns = 0
+    var game_status = 'active'
 
     function is_marker (marker) {
         if ((marker == 'x') || (marker == 'o')) {
@@ -99,7 +100,7 @@ const gameboard = (function () {
 
     const place_marker = (row, col, marker) => {
         var invalid_move = false
-        turns += 1
+        gameboard.turns += 1
         // Ensure that x or o are the markers provided.
         if (!is_marker(marker)) {
             console.log("Error: Please only use 'x' or 'o' as markers.")
@@ -127,9 +128,11 @@ const gameboard = (function () {
         display_board()
         var game_won = check_win()
         if(game_won) {
+            game_status = 'won'
             console.log("Game has ended due to win")
         }
-        else if(turns === 9){
+        else if(gameboard.turns === 9){
+            game_status = "tie"
             console.log("Game has ended as there are no more valid moves!")
         }
         return game_won
@@ -142,20 +145,61 @@ const gameboard = (function () {
 
 const board = document.getElementById("board")
 const rows = board.children
+var turn = 'o'
+const turnStatus = document.getElementById("turn-status")
+const turnNum = document.getElementById("turn-num")
+
+const toggleTurn = function() {
+    if (turn == 'o') {
+        turn = 'x'
+    }
+    else {
+        turn = 'o'
+    }
+}
+const newTurn = function () {
+    toggleTurn()
+    var player
+    if (turn == 'o') {
+        player = 'Naughts'
+    }
+    else {
+        player = 'Crosses';
+    }
+    
+    turnStatus.innerText = `${player}' turn.`
+    turnNum.innerText = `Turn number ${gameboard.turns}.`
+}
+
+
+const getCoords = function (cell) {
+    // Function to get the column and row indexes of cell (based on 0).
+    var rowNode= cell.parentNode
+    var boardNode = rowNode.parentNode
+
+    var colIndex = Array.prototype.indexOf.call(rowNode.children, cell)
+    var rowIndex = Array.prototype.indexOf.call(boardNode.children, rowNode)
+    
+    return [rowIndex, colIndex]
+}
 
 for (i=0; i<rows.length; i++) {
     var row = rows[i]
     var cells = row.children
-    for (j=0; j<row.length; j++) {
+    for (j=0; j<cells.length; j++) {
         var cell = cells[j]
-        console.log(cell)
         cell.addEventListener(
             'click',
             (e) => {
-                e.target.innerText = 'x' }
-            )
-        }
+                e.target.innerText = turn;
+                const [row, col] = (getCoords(e.target));
+                gameboard.place_marker(row + 1, col + 1, turn)
+                newTurn()
+            }
+        )
     }
+}
+
 
 
 // TODO:
