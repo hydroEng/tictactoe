@@ -45,11 +45,11 @@ const gameboard = (function () {
         // Function to check if win condition has been met. Input is a comma-seperated string of 3 markers.
         var game_won
         if (triple == 'x,x,x') {
-            console.log("Crosses wins!")
+            gameboard.game_status = 'x'
             game_won = true
         }
         else if (triple == 'o,o,o') {
-            console.log("Naughts wins!")
+            gameboard.game_status = 'o'
             game_won = true
         }
         else {
@@ -58,22 +58,8 @@ const gameboard = (function () {
         return game_won
     }
 
-    const check_valid_moves = function () {
-        // Helper function to check if any valid moves remain. Alternatively, can just end
-        // game at 9 turns. 
-        for (i=0; i < board.length; i++) {
-            var row = board[i]
-            for (j=0; j < row.length; j++) {
-                marker = row[j]
-                if (marker == '.') {
-                    return(true)
-                }
-            }
-        }
-        return(false)
-    }
-
     const check_win = function () {
+        var game_won
         // Check if wins along row.
         for (i=0; i < board.length; i++) {
             var row = board[i].toString();
@@ -89,11 +75,6 @@ const gameboard = (function () {
         for (i=0; i < board.length; i++) {
             var column = `${board[0][i]},${board[1][i]},${board[2][i]}`
             game_won = check_triple(column)
-        }
-
-        if (game_won) {
-            console.log("Game has concluded due to win.")
-            return(true)
         }
     }
 
@@ -126,18 +107,17 @@ const gameboard = (function () {
         // Place marker if all checks pass.
         board[row - 1].splice([col - 1],1, marker)
         display_board()
-        var game_won = check_win()
-        if(game_won) {
-            game_status = 'won'
+        check_win()
+        if(gameboard.game_won) {
+            gameboard.game_status = 'won'
             console.log("Game has ended due to win")
         }
         else if(gameboard.turns === 9){
-            game_status = "tie"
+            gameboard.game_status = "tie"
             console.log("Game has ended as there are no more valid moves!")
         }
-        return game_won
     }
-    return { board, turns, new_board, place_marker, display_board }
+    return { board, turns, game_status, new_board, place_marker, display_board }
 }
 )()
 
@@ -150,6 +130,7 @@ const turnStatus = document.getElementById("turn-status")
 const turnNum = document.getElementById("turn-num")
 
 const toggleTurn = function() {
+    console.log(turn)
     if (turn == 'o') {
         turn = 'x'
     }
@@ -161,7 +142,7 @@ const newTurn = function () {
     toggleTurn()
     var player
     if (turn == 'o') {
-        player = 'Naughts'
+        player = 'Naughts';
     }
     else {
         player = 'Crosses';
@@ -191,10 +172,24 @@ for (i=0; i<rows.length; i++) {
         cell.addEventListener(
             'click',
             (e) => {
-                e.target.innerText = turn;
                 const [row, col] = (getCoords(e.target));
-                gameboard.place_marker(row + 1, col + 1, turn)
-                newTurn()
+                if (e.target.innerText == '.') {
+
+                    e.target.innerText = turn;
+                    gameboard.place_marker(row + 1, col + 1, turn)
+                    if (gameboard.game_status == 'x') {
+                        turnStatus.innerText = 'Crosses wins!'
+                    }
+                    else if (gameboard.game_status == 'o') {
+                        turnStatus.innerText = 'Naughts wins!'
+                    }
+                    else if (gameboard.game_status == 'tie') {
+                        turnStatus.innerText = 'It\'s a tie'
+                    }
+                    else {newTurn()}
+
+                }
+                
             }
         )
     }
