@@ -199,8 +199,6 @@ for (i=0; i<rows.length; i++) {
 
 // TODO:
 
-// - Create a function that will check if there are any valid moves left. If not, end game.
-// - Create a function to end game. 
-// - NEW BOARD FUNC DONE.
-
-// - Build simple front-end.
+// Lock placing markers once game has ended
+// Refresh button
+// Style game. 
