@@ -152,15 +152,6 @@ const newTurn = function () {
     turnNum.innerText = `Turn number ${gameboard.turns}.`
 }
 
-const endGame = function (e) {
-    for (i; rows.length; i++) {
-        cells = rows.children
-        for (j; cells.length; j++) {
-            cell = cells[j]
-            cell.
-        }
-    }
-}
 
 const getCoords = function (cell) {
     // Function to get the column and row indexes of cell (based on 0).
@@ -188,15 +179,12 @@ for (i=0; i<rows.length; i++) {
                     gameboard.place_marker(row + 1, col + 1, turn)
                     if (gameboard.game_status == 'x') {
                         turnStatus.innerText = 'Crosses wins!'
-                        endGame(e)
                     }
                     else if (gameboard.game_status == 'o') {
                         turnStatus.innerText = 'Naughts wins!'
-                        endGame(e)
                     }
                     else if (gameboard.game_status == 'tie') {
                         turnStatus.innerText = 'It\'s a tie'
-                        endGame(e)
                     }
                     else {newTurn()}
 
