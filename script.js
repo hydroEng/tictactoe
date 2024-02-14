@@ -43,23 +43,17 @@ const gameboard = (function () {
 
     function check_triple (triple) {
         // Function to check if win condition has been met. Input is a comma-seperated string of 3 markers.
-        var game_won
         if (triple == 'x,x,x') {
             gameboard.game_status = 'x'
             game_won = true
         }
         else if (triple == 'o,o,o') {
             gameboard.game_status = 'o'
-            game_won = true
         }
-        else {
-            game_won = false
-        }
-        return game_won
     }
 
     const check_win = function () {
-        var game_won
+        var game_won = false
         // Check if wins along row.
         for (i=0; i < board.length; i++) {
             var row = board[i].toString();
@@ -69,16 +63,12 @@ const gameboard = (function () {
         ['LR', 'RL'].forEach((direction) => {
             var diagonal = diagonals_to_str(direction)
             game_won = check_triple(diagonal)
-            
         })
         // Check if wins along columns.
         for (i=0; i < board.length; i++) {
             var column = `${board[0][i]},${board[1][i]},${board[2][i]}`
-            console.log(column)
             game_won = check_triple(column)
-
         }
-        
         
         return game_won
     }
@@ -111,17 +101,13 @@ const gameboard = (function () {
         // Place marker if all checks pass.
         board[row - 1].splice([col - 1],1, marker)
         display_board()
-        var game_won = check_win()
-        console.log(game_won)
+        check_win()
         
-        
-        if(game_won) {
-            gameboard.game_status = 'won'
-            console.log("Game has ended due to win")
-        }
-        else if(gameboard.turns === 10){
-            gameboard.game_status = "tie"
-            console.log("Game has ended as there are no more valid moves!")
+        if (gameboard.game_status == 'active') {
+            if(gameboard.turns === 10){
+                gameboard.game_status = "tie"
+                console.log("Game has ended as there are no more valid moves!")
+            }
         }
         
     }
@@ -138,7 +124,6 @@ const turnStatus = document.getElementById("turn-status")
 const turnNum = document.getElementById("turn-num")
 
 const toggleTurn = function() {
-    console.log(turn)
     if (turn == 'o') {
         turn = 'x'
     }
@@ -210,8 +195,7 @@ for (i=0; i<rows.length; i++) {
                     }
                     else {newTurn()}
 
-                }
-                
+                }       
             }
         )
     }
