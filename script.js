@@ -9,7 +9,7 @@ const gameboard = (function () {
     }
     
     var board = new_board()
-    var turns = 0
+    var turns = 1
     var game_status = 'active'
 
     function is_marker (marker) {
@@ -74,8 +74,13 @@ const gameboard = (function () {
         // Check if wins along columns.
         for (i=0; i < board.length; i++) {
             var column = `${board[0][i]},${board[1][i]},${board[2][i]}`
+            console.log(column)
             game_won = check_triple(column)
+
         }
+        
+        
+        return game_won
     }
 
 
@@ -101,21 +106,24 @@ const gameboard = (function () {
 
         if (invalid_move) {
             console.log("Board not changed.")
-            display_board()
             return
         }
         // Place marker if all checks pass.
         board[row - 1].splice([col - 1],1, marker)
         display_board()
-        check_win()
-        if(gameboard.game_won) {
+        var game_won = check_win()
+        console.log(game_won)
+        
+        
+        if(game_won) {
             gameboard.game_status = 'won'
             console.log("Game has ended due to win")
         }
-        else if(gameboard.turns === 9){
+        else if(gameboard.turns === 10){
             gameboard.game_status = "tie"
             console.log("Game has ended as there are no more valid moves!")
         }
+        
     }
     return { board, turns, game_status, new_board, place_marker, display_board }
 }
@@ -164,6 +172,17 @@ const getCoords = function (cell) {
     return [rowIndex, colIndex]
 }
 
+const endGame = function () {
+    for (i = 0; i < rows.length; i++) {
+        var row = rows[i]
+        var cells = row.children
+        for (j=0; j<cells.length; j++) {
+            var cell = cells[j]
+            cell.replaceWith(cell.cloneNode(true))
+        }
+    }
+}
+
 for (i=0; i<rows.length; i++) {
     var row = rows[i]
     var cells = row.children
@@ -179,12 +198,15 @@ for (i=0; i<rows.length; i++) {
                     gameboard.place_marker(row + 1, col + 1, turn)
                     if (gameboard.game_status == 'x') {
                         turnStatus.innerText = 'Crosses wins!'
+                        endGame()
                     }
                     else if (gameboard.game_status == 'o') {
                         turnStatus.innerText = 'Naughts wins!'
+                        endGame()
                     }
                     else if (gameboard.game_status == 'tie') {
                         turnStatus.innerText = 'It\'s a tie'
+                        endGame()
                     }
                     else {newTurn()}
 
